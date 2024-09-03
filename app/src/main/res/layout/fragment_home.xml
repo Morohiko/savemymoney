@@ -10,9 +10,9 @@
         android:id="@+id/redBtn"
         android:layout_width="116dp"
         android:layout_height="70dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="576dp"
-        android:text="-"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="504dp"
+        android:text="@string/withdrawBtnText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,9 +29,9 @@
         android:id="@+id/grnBtn"
         android:layout_width="132dp"
         android:layout_height="63dp"
-        android:layout_marginEnd="43dp"
-        android:layout_marginBottom="92dp"
-        android:text="+"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="156dp"
+        android:text="@string/depositBtnText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

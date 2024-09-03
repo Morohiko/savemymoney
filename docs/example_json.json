@@ -1,0 +1,27 @@
+{
+    "budget": 13000,
+    "03-09-24": [
+        {
+            "time": "09:05:22",
+            "amount": 10,
+            "desc": "tea"
+        },
+        {
+            "time": "10:10:13",
+            "amount": 15,
+            "desc": "fpv"
+        }
+    ],
+    "04-09-24": [
+        {
+            "time": "13:24:41",
+            "amount": 35,
+            "desc": "cigarettes"
+        },
+        {
+            "time": "15:10:29",
+            "amount": 20,
+            "desc": "fuel"
+        }
+    ]
+}

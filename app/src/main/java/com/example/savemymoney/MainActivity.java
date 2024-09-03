@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private Button withdrawBtn;
     private Button depositBtn;
 
-    private Wallet wallet = new Wallet(this);
+    private Wallet wallet;// = new Wallet(getCacheDir());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +45,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
-        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null)
-                        .setAnchorView(R.id.fab).show();
-            }
-        });
+//        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null)
+//                        .setAnchorView(R.id.fab).show();
+//            }
+//        });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
@@ -92,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
                 wallet.depositMoney(new Date(), 11.22F);
             }
         });
+
+
+        Log.d(TAG, "getCacheDir = " + getCacheDir());
+        wallet = new Wallet(getCacheDir());
     }
 
     @Override
@@ -109,6 +113,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateProgressBar(float amount) {
-        
+
     }
 }
