@@ -6,7 +6,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -93,10 +92,13 @@ public class Wallet {
         removeEntryByTime(dateToString(date), timeToString(date));
     }
 
-    void updateBudgetForMonth(int amout) throws JSONException {
-        Log.d(TAG, "withdrawMoney: amount = " + amout);
-        JSONObject budgetData = new JSONObject();
-        budgetData.put("budget", 13000);
+    void updateBudgetForMonth(int amount) throws JSONException {
+        Log.d(TAG, "updateBudgetForMonth: amount = " + amount);
+        budget.setTotalBudget(amount);
+    }
+
+    int getBudgetForMonth() {
+        return budget.getTotalBudget();
     }
 
     @NonNull

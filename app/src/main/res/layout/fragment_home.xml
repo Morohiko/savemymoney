@@ -8,31 +8,42 @@
 
     <Button
         android:id="@+id/redBtn"
-        android:layout_width="116dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="504dp"
+        android:layout_width="145dp"
+        android:layout_height="90dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="40dp"
         android:text="@string/withdrawBtnText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
         android:id="@+id/moneyLeftPb"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="354dp"
+        android:layout_width="307dp"
         android:layout_height="63dp"
-        tools:layout_editor_absoluteX="28dp"
-        tools:layout_editor_absoluteY="231dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="64dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/grnBtn"
-        android:layout_width="132dp"
-        android:layout_height="63dp"
-        android:layout_marginEnd="36dp"
-        android:layout_marginBottom="156dp"
+        android:layout_width="145dp"
+        android:layout_height="90dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="40dp"
         android:text="@string/depositBtnText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/installedBudgetText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="188dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
@@ -18,30 +17,27 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.savemymoney.databinding.ActivityMainBinding;
+import com.example.savemymoney.ui.settings.SettingsFragment;
 
-import java.io.File;
 import java.util.Date;
 import java.util.Random;
 
-import com.example.savemymoney.Wallet;
+import org.json.JSONException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SettingsFragment.OnSettingsChangeListener {
     private static final String TAG = "SaveMyMoney:MainActivity";
 
     private AppBarConfiguration mAppBarConfiguration;
-    private ActivityMainBinding binding;
 
     private ProgressBar myProgressBar;
-    private Button withdrawBtn;
-    private Button depositBtn;
 
-    private Wallet wallet;// = new Wallet(getCacheDir());
+    private Wallet wallet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        com.example.savemymoney.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
@@ -51,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_settings)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -60,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Find the Button by its ID
         myProgressBar = findViewById(R.id.moneyLeftPb);
-        withdrawBtn = findViewById(R.id.redBtn);
-        depositBtn = findViewById(R.id.grnBtn);
+        Button withdrawBtn = findViewById(R.id.redBtn);
+        Button depositBtn = findViewById(R.id.grnBtn);
 
         // Set a click listener
         withdrawBtn.setOnClickListener(new View.OnClickListener() {
@@ -108,5 +104,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateProgressBar(float amount) {
 
+    }
+
+    public void setBudget(int value) {
+        try {
+            wallet.updateBudgetForMonth(value);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getBudget() {
+        return wallet.getBudgetForMonth();
+    }
+
+    @Override
+    public void onSettingChanged(String newValue) {
+        Log.d(TAG, "onSettingChanged: newValue: " + newValue);
+        setBudget(Integer.parseInt(newValue));
     }
 }
