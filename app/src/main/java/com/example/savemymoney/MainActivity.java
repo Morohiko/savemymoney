@@ -1,11 +1,18 @@
 package com.example.savemymoney;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import java.io.File;
 
 import com.google.android.material.navigation.NavigationView;
@@ -66,9 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 int randomProgress = new Random().nextInt(101);
                 // Set the progress bar to this value
                 myProgressBar.setProgress(randomProgress);
-
-                // TODO: implement
-                wallet.withdrawMoney(new Date()/*today*/, 155, "desc");
+                newWithdraw();
             }
         });
 
@@ -76,8 +81,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "depositBtn: onClickListener");
-
-                wallet.depositMoney(new Date(), 11, "desc");
+                newDeposit();
             }
         });
 
@@ -85,6 +89,86 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: cacheDir = " + cacheDir);
         Settings.getInstance().installSettings(cacheDir);
         wallet = new Wallet(cacheDir);
+    }
+
+    private void newWithdraw() {
+        final EditText priceInput = new EditText(this);
+        priceInput.setHint("price");
+        priceInput.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        final EditText descInput = new EditText(this);
+        descInput.setHint("desc");
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(priceInput);
+        layout.addView(descInput);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("withdraw:");
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String priceValue = priceInput.getText().toString();
+                String descValue = descInput.getText().toString();
+
+                wallet.withdrawMoney(new Date()/*today*/, Integer.parseInt(priceValue), descValue);
+
+                Toast.makeText(MainActivity.this, "saved:\nprice: " + priceValue + "\ndesc: " + descValue, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void newDeposit() {
+        final EditText priceInput = new EditText(this);
+        priceInput.setHint("price");
+        priceInput.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        final EditText descInput = new EditText(this);
+        descInput.setHint("desc");
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(priceInput);
+        layout.addView(descInput);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("deposit:");
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String priceValue = priceInput.getText().toString();
+                String descValue = descInput.getText().toString();
+
+                wallet.depositMoney(new Date(), Integer.parseInt(priceValue), descValue);
+
+                Toast.makeText(MainActivity.this, "saved:\nprice: " + priceValue + "\ndesc: " + descValue, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
     @Override
