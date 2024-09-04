@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import java.io.File;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -17,14 +18,11 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.savemymoney.databinding.ActivityMainBinding;
-import com.example.savemymoney.ui.settings.SettingsFragment;
 
 import java.util.Date;
 import java.util.Random;
 
-import org.json.JSONException;
-
-public class MainActivity extends AppCompatActivity implements SettingsFragment.OnSettingsChangeListener {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = "SaveMyMoney:MainActivity";
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -83,9 +81,10 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
             }
         });
 
-
-        Log.d(TAG, "getCacheDir = " + getCacheDir());
-        wallet = new Wallet(getCacheDir());
+        File cacheDir = getCacheDir();
+        Log.d(TAG, "onCreate: cacheDir = " + cacheDir);
+        Settings.getInstance().installSettings(cacheDir);
+        wallet = new Wallet(cacheDir);
     }
 
     @Override
@@ -100,27 +99,5 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
-    }
-
-    private void updateProgressBar(float amount) {
-
-    }
-
-    public void setBudget(int value) {
-        try {
-            wallet.updateBudgetForMonth(value);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public int getBudget() {
-        return wallet.getBudgetForMonth();
-    }
-
-    @Override
-    public void onSettingChanged(String newValue) {
-        Log.d(TAG, "onSettingChanged: newValue: " + newValue);
-        setBudget(Integer.parseInt(newValue));
     }
 }

@@ -53,13 +53,10 @@ public class CacheHelper {
         return obj;
     }
 
-    void writeEntriesToJson(Map<String, WalletContainer> dateToEntriesMap, Budget budget) {
+    void writeEntriesToJson(Map<String, WalletContainer> dateToEntriesMap) {
         JSONObject jsonObject = new JSONObject();
 
         try {
-            // Save the budget
-            jsonObject.put("budget", budget.getTotalBudget());
-
             // Iterate over the map and convert each date's entries to JSON
             for (Map.Entry<String, WalletContainer> entry : dateToEntriesMap.entrySet()) {
                 String dateKey = entry.getKey();
@@ -88,7 +85,7 @@ public class CacheHelper {
         }
     }
 
-    Map<String, WalletContainer> readEntriesFromJson(Budget budget) {
+    Map<String, WalletContainer> readEntriesFromJson() {
         Map<String, WalletContainer> dateToEntriesMap = new HashMap<>();
 
         StringBuilder jsonString = new StringBuilder();
@@ -103,11 +100,6 @@ public class CacheHelper {
 
             // Parse the JSON string
             JSONObject jsonObject = new JSONObject(jsonString.toString());
-
-            // Load the budget
-            if (jsonObject.has("budget")) {
-                budget.setTotalBudget(jsonObject.getInt("budget"));
-            }
 
             // Iterate over the keys (dates)
             Iterator<String> keys = jsonObject.keys();

@@ -73,7 +73,6 @@ public class CacheHelperTest {
     public void testReadEntriesFromJson() throws Exception {
         // Create a JSON string similar to what you'd expect in the file
         String jsonContent = "{"
-                + "\"budget\": 1000,"
                 + "\"03-09-24\": ["
                 + "    {\"time\": \"09:05\", \"amount\": 10, \"desc\": \"tea\"},"
                 + "    {\"time\": \"10:10\", \"amount\": 15, \"desc\": \"fpv\"}"
@@ -91,15 +90,11 @@ public class CacheHelperTest {
         CacheHelper cacheHelper = new CacheHelper(cacheFile);
 
         // Call the method to read the JSON file into the map
-        Budget budget = new Budget(0);
-        Map<String, WalletContainer> dateToEntriesMap = cacheHelper.readEntriesFromJson(budget);
+        Map<String, WalletContainer> dateToEntriesMap = cacheHelper.readEntriesFromJson();
 
         // Verify the size of the map
         assertNotNull(dateToEntriesMap);
         assertEquals(2, dateToEntriesMap.size());
-
-        // Verify entry for "budget"
-        assertEquals(1000, budget.getTotalBudget());
 
         // Verify entries for "03-09-24"
         WalletContainer container1 = dateToEntriesMap.get("03-09-24");
@@ -142,10 +137,9 @@ public class CacheHelperTest {
             fos.write(jsonContent.getBytes());
         }
 
-        Budget budget = new Budget(0);
         CacheHelper cacheHelper = new CacheHelper(cacheFile);
         // Call the method to read the JSON file into the map
-        Map<String, WalletContainer> dateToEntriesMap = cacheHelper.readEntriesFromJson(budget);
+        Map<String, WalletContainer> dateToEntriesMap = cacheHelper.readEntriesFromJson();
 
         // Verify that the map is empty
         assertNotNull(dateToEntriesMap);
@@ -169,10 +163,9 @@ public class CacheHelperTest {
         entriesForSecondDate.addEntry(new WalletEntry("15:10", 20, "fuel"));
         dateToEntriesMap.put("04-09-24", entriesForSecondDate);
 
-        Budget budget = new Budget(1000);
         CacheHelper cacheHelper = new CacheHelper(cacheFile);
         // Write the map to a JSON file
-        cacheHelper.writeEntriesToJson(dateToEntriesMap, budget);
+        cacheHelper.writeEntriesToJson(dateToEntriesMap);
 
         // Read the file back and verify its contents
         StringBuilder jsonString = new StringBuilder();
@@ -187,10 +180,6 @@ public class CacheHelperTest {
 
         // Parse the JSON string and verify its structure and contents
         JSONObject jsonObject = new JSONObject(jsonString.toString());
-
-        // Verify the JSON entry for "budget"
-        assertTrue(jsonObject.has("budget"));
-        assertEquals(1000, jsonObject.getInt("budget"));
 
         // Verify the JSON object for "03-09-24"
         assertTrue(jsonObject.has("03-09-24"));
@@ -230,7 +219,7 @@ public class CacheHelperTest {
 
         CacheHelper cacheHelper = new CacheHelper(cacheFile);
         // Write the empty map to a JSON file
-        cacheHelper.writeEntriesToJson(dateToEntriesMap, new Budget(100));
+        cacheHelper.writeEntriesToJson(dateToEntriesMap);
 
         // Read the file back and verify that it contains an empty JSON object
         StringBuilder jsonString = new StringBuilder();
@@ -245,9 +234,6 @@ public class CacheHelperTest {
 
         // Parse the JSON string and verify that it's empty
         JSONObject jsonObject = new JSONObject(jsonString.toString());
-        assertTrue(jsonObject.length() == 1); // budget only
-
-        // Verify entry for "budget"
-        assertEquals(jsonObject.getInt("budget"), 100);
+        assertTrue(jsonObject.length() == 0);
     }
 }

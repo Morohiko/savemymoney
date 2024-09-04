@@ -5,8 +5,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONException;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,7 +17,6 @@ public class Wallet {
     private File cacheFile;
     private static final String cacheFileName = "savemymoneycache.json";
     private Map<String/*date*/, WalletContainer> walletContainers;
-    private Budget budget;
 
     CacheHelper cacheHelper;
     public Wallet(File cDir) {
@@ -73,9 +70,9 @@ public class Wallet {
         String timeString = timeToString(date);
         Log.d(TAG, "withdrawMoney: date = " + dateString + ", time = " + timeString + ", amount = " + amount);
 
-        walletContainers = cacheHelper.readEntriesFromJson(budget);
+        walletContainers = cacheHelper.readEntriesFromJson();
         addEntryToWallet(dateString, new WalletEntry(timeString, -amount, desc));
-        cacheHelper.writeEntriesToJson(walletContainers, budget);
+        cacheHelper.writeEntriesToJson(walletContainers);
     }
 
     void depositMoney(Date date, int amount, String desc) {
@@ -83,22 +80,13 @@ public class Wallet {
         String timeString = timeToString(date);
         Log.d(TAG, "depositMoney: date = " + dateString + ", time = " + timeString + ", amount = " + amount);
 
-        Map<String, WalletContainer> container = cacheHelper.readEntriesFromJson(budget);
+        Map<String, WalletContainer> container = cacheHelper.readEntriesFromJson();
         addEntryToWallet(dateString, new WalletEntry(timeString, amount, desc));
     }
 
     void removeOperation(Date date) {
         Log.d(TAG, "removeOperation: date = " + date);
         removeEntryByTime(dateToString(date), timeToString(date));
-    }
-
-    void updateBudgetForMonth(int amount) throws JSONException {
-        Log.d(TAG, "updateBudgetForMonth: amount = " + amount);
-        budget.setTotalBudget(amount);
-    }
-
-    int getBudgetForMonth() {
-        return budget.getTotalBudget();
     }
 
     @NonNull
@@ -113,40 +101,3 @@ public class Wallet {
         return dateFormat.format(date);
     }
 }
-
-class Budget {
-    private int totalBudget;
-
-    public Budget(int totalBudget) {
-        this.totalBudget = totalBudget;
-    }
-
-    public int getTotalBudget() {
-        return totalBudget;
-    }
-
-    public void setTotalBudget(int totalBudget) {
-        this.totalBudget = totalBudget;
-    }
-
-    public int calculateRemainingBudget(Map<String, WalletContainer> walletMap) {
-        int totalSpent = 0;
-
-        // Iterate through all entries in the map to calculate total spent
-        for (WalletContainer container : walletMap.values()) {
-            for (WalletEntry entry : container.getEntries()) {
-                totalSpent += entry.getAmount();
-            }
-        }
-
-        return totalBudget - totalSpent;
-    }
-
-    @Override
-    public String toString() {
-        return "Budget{" +
-                "totalBudget=" + totalBudget +
-                '}';
-    }
-}
-
