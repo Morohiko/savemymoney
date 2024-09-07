@@ -26,13 +26,11 @@ public class CacheHelper {
     private File cacheFile;
 
     CacheHelper(File cacheFl) {
-        boolean isSuccess = createFileIfNotExist(cacheFl);
-        if (!isSuccess) {
-            Log.d(TAG, "can`t create file");
-            // TODO: Exception?
-            return;
-        }
         cacheFile = cacheFl;
+        boolean isSuccess = createFileIfNotExist();
+        if (!isSuccess) {
+            Log.e(TAG, "can`t create cache file");
+        }
     }
 
     WalletEntry jsonToWalletEntry(@NonNull JSONObject obj) {
@@ -98,6 +96,8 @@ public class CacheHelper {
                 jsonString.append(line);
             }
 
+            Log.d(TAG, "readEntriesFromJson: jsonString = " + jsonString);
+
             // Parse the JSON string
             JSONObject jsonObject = new JSONObject(jsonString.toString());
 
@@ -106,11 +106,6 @@ public class CacheHelper {
 
             while (keys.hasNext()) {
                 String dateKey = keys.next();
-
-                // Skip if it's not an actual date (e.g., budget field)
-                if (!dateKey.matches("\\d{2}-\\d{2}-\\d{2}")) {
-                    continue;
-                }
 
                 JSONArray entriesArray = jsonObject.getJSONArray(dateKey);
                 WalletContainer entryContainer = new WalletContainer();
@@ -131,18 +126,15 @@ public class CacheHelper {
         return dateToEntriesMap;
     }
 
-    public boolean createFileIfNotExist(@NonNull File file) {
-        if (file.exists()) {
-            return true;
-        }
+    private boolean createCacheFile() {
         try {
             // Create a new file
-            boolean created = file.createNewFile();
+            boolean created = cacheFile.createNewFile();
             if (!created) {
-                Log.d(TAG, "can`t create file " + file);
+                Log.d(TAG, "can`t create file " + cacheFile);
                 return false;
             }
-            FileOutputStream fos = new FileOutputStream(file);
+            FileOutputStream fos = new FileOutputStream(cacheFile);
             fos.write(new String("{}").getBytes());
             fos.flush();
         } catch (IOException e) {
@@ -151,5 +143,19 @@ public class CacheHelper {
             return false;
         }
         return true;
+    }
+
+    public boolean createFileIfNotExist() {
+        if (cacheFile.exists()) {
+            return true;
+        }
+        return createCacheFile();
+    }
+
+    public boolean recreateCache() {
+        if (cacheFile.exists()) {
+            cacheFile.delete();
+        }
+        return createCacheFile();
     }
 }

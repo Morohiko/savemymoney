@@ -1,6 +1,9 @@
 package com.example.savemymoney.ui.settings;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +19,14 @@ import com.example.savemymoney.databinding.FragmentSettingsBinding;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SettingsFragment extends Fragment {
     private FragmentSettingsBinding binding;
+    private OnFragmentInteractionListener listener;
 
     private JSONObject newSettings = null;
 
@@ -59,7 +64,40 @@ public class SettingsFragment extends Fragment {
                 Settings.getInstance().saveSettings(newSettings);
             }
         });
+
+        Button removeCacheBtn = root.findViewById(R.id.remove_cache_btn);
+        removeCacheBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showConfirmationDialog();
+            }
+        });
         return root;
+    }
+
+    private void showConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("removing cache");
+        builder.setMessage("remove cache??");
+
+        builder.setPositiveButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+//                recreateCache
+                if (listener != null) {
+                    listener.onFragmentInteraction("removeCache");
+                }
+                Toast.makeText(getActivity(), "removed", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.show();
     }
 
     @Override
@@ -67,5 +105,25 @@ public class SettingsFragment extends Fragment {
         super.onDestroyView();
         binding = null;
         newSettings = null;
+    }
+
+    public interface OnFragmentInteractionListener {
+        void onFragmentInteraction(String data);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            listener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
     }
 }

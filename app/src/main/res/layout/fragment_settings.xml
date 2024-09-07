@@ -40,9 +40,17 @@
         <!-- Button to Save or Apply Changes -->
         <Button
             android:id="@+id/save_settings_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/save_settings_btn" />
+
+        <!-- Button to Remove Cache -->
+        <Button
+            android:id="@+id/remove_cache_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/remove_cache_btn"
+            android:backgroundTint="@color/colorRed" />
 
     </LinearLayout>
 </ScrollView>

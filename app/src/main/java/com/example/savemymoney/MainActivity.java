@@ -1,5 +1,6 @@
 package com.example.savemymoney;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -11,10 +12,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
 
+import com.example.savemymoney.ui.settings.SettingsFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
@@ -29,7 +32,7 @@ import com.example.savemymoney.databinding.ActivityMainBinding;
 import java.util.Date;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SettingsFragment.OnFragmentInteractionListener {
     private static final String TAG = "SaveMyMoney:MainActivity";
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -37,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar myProgressBar;
 
     private Wallet wallet;
+
+    private TextView budgetMonthTW;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         Button withdrawBtn = findViewById(R.id.redBtn);
         Button depositBtn = findViewById(R.id.grnBtn);
 
+        budgetMonthTW = findViewById(R.id.budgetMonthTW);
+
         // Set a click listener
         withdrawBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: cacheDir = " + cacheDir);
         Settings.getInstance().installSettings(cacheDir);
         wallet = new Wallet(cacheDir);
+
+        updateTotalOnScreen();
     }
 
     private void newWithdraw() {
@@ -118,6 +127,9 @@ public class MainActivity extends AppCompatActivity {
                 wallet.withdrawMoney(new Date()/*today*/, Integer.parseInt(priceValue), descValue);
 
                 Toast.makeText(MainActivity.this, "saved:\nprice: " + priceValue + "\ndesc: " + descValue, Toast.LENGTH_LONG).show();
+
+                // update screen
+                updateTotalOnScreen();
             }
         });
 
@@ -158,6 +170,9 @@ public class MainActivity extends AppCompatActivity {
                 wallet.depositMoney(new Date(), Integer.parseInt(priceValue), descValue);
 
                 Toast.makeText(MainActivity.this, "saved:\nprice: " + priceValue + "\ndesc: " + descValue, Toast.LENGTH_LONG).show();
+
+                // update screen
+                updateTotalOnScreen();
             }
         });
 
@@ -183,5 +198,30 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @SuppressLint("SetTextI18n")
+    void updateTotalOnScreen() {
+        int total = wallet.getSumOfTransactionsByDate(new Date() /*today*/);
+        int budget = Settings.getInstance().getBudget();
+        budgetMonthTW.setText("total = " + total + ", remain budget = " + (budget + total));
+    }
+
+    @Override
+    public void onFragmentInteraction(String data) {
+        Log.d(TAG, "onFragmentInteraction: received = " + data);
+        if (data.equals("removeCache")) {
+            wallet.recreateCache();
+            // update screen
+            updateTotalOnScreen();
+        } else {
+            Log.e(TAG, "onFragmentInteraction: invalid settings command received: " + data);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
     }
 }

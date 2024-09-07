@@ -1,11 +1,14 @@
 package com.example.savemymoney;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class WalletEntry {
+    private static final String TAG = "SaveMyMoney:WalletEntry";
+
     private String time;
     private int amount;
     private String description;
@@ -27,12 +30,12 @@ public class WalletEntry {
         description = desc;
     }
 
-
     public String getTime() {
         return time;
     }
 
     public int getAmount() {
+        Log.d(TAG, "getAmount: amount = " + amount);
         return amount;
     }
 

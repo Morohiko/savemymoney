@@ -34,12 +34,7 @@ public class SettingsTest {
         settings = Settings.getInstance();
 
         // Create a mock file for the settings cache
-        mockCacheFile = new File(context.getCacheDir(), "test_settings.json");
-
-        // Ensure the file is deleted before each test
-        if (mockCacheFile.exists()) {
-            mockCacheFile.delete();
-        }
+        mockCacheFile = new File(context.getCacheDir(), "savemymoneysettings.json");
     }
 
     @After

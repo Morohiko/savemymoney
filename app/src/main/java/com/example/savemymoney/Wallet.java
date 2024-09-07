@@ -10,15 +10,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class Wallet {
     private static final String TAG = "SaveMyMoney:Wallet";
-    private File cacheFile;
+
     private static final String cacheFileName = "savemymoneycache.json";
+    private File cacheFile;
+    private CacheHelper cacheHelper;
+
     private Map<String/*date*/, WalletContainer> walletContainers;
 
-    CacheHelper cacheHelper;
     public Wallet(File cDir) {
         cacheFile = new File(cDir, cacheFileName);
         Log.d(TAG, "cacheFile = " + cacheFile);
@@ -80,13 +83,35 @@ public class Wallet {
         String timeString = timeToString(date);
         Log.d(TAG, "depositMoney: date = " + dateString + ", time = " + timeString + ", amount = " + amount);
 
-        Map<String, WalletContainer> container = cacheHelper.readEntriesFromJson();
+        walletContainers = cacheHelper.readEntriesFromJson();
         addEntryToWallet(dateString, new WalletEntry(timeString, amount, desc));
+        cacheHelper.writeEntriesToJson(walletContainers);
     }
 
     void removeOperation(Date date) {
         Log.d(TAG, "removeOperation: date = " + date);
         removeEntryByTime(dateToString(date), timeToString(date));
+    }
+
+    int getSumOfTransactionsByDate(Date date) {
+        walletContainers = cacheHelper.readEntriesFromJson();
+        String dateString = dateToString(date);
+        int total = 0;
+        for (Map.Entry<String, WalletContainer> entry : walletContainers.entrySet()) {
+            if (!entry.getKey().equals(dateString)) {
+                continue;
+            }
+
+            List<WalletEntry> entries = entry.getValue().getEntries();
+            for (int i = 0; i < entries.size(); i++) {
+                total += entries.get(i).getAmount();
+            }
+        }
+        return total;
+    }
+
+    void recreateCache() {
+        cacheHelper.recreateCache();
     }
 
     @NonNull
