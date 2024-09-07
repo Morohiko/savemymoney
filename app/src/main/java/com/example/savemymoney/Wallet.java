@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -110,9 +111,37 @@ public class Wallet {
         return total;
     }
 
+    int getSumOfTransactionsByPeriod(Date start, Date finish) {
+        walletContainers = cacheHelper.readEntriesFromJson();
+        int total = 0;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        for (Map.Entry<String, WalletContainer> entry : walletContainers.entrySet()) {
+            String dateKey = entry.getKey();
+            Date entryDate;
+            try {
+                entryDate = dateFormat.parse(dateKey);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                continue;
+            }
+
+            if (!entryDate.before(start) && !entryDate.after(finish)) {
+                List<WalletEntry> entries = entry.getValue().getEntries();
+                for (WalletEntry walletEntry : entries) {
+                    total += walletEntry.getAmount();
+                }
+            }
+        }
+
+        return total;
+    }
+
     void recreateCache() {
         cacheHelper.recreateCache();
     }
+
+    void removeCache() { cacheHelper.removeCache(); }
 
     @NonNull
     private String dateToString(Date date) {

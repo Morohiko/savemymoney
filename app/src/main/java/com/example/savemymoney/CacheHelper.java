@@ -158,4 +158,10 @@ public class CacheHelper {
         }
         return createCacheFile();
     }
+
+    public void removeCache() {
+        if (cacheFile.exists()) {
+            cacheFile.delete();
+        }
+    }
 }
