@@ -32,4 +32,6 @@
     <string name="save_settings_btn">Save Settings</string>
     <string name="remove_cache_btn">Remove Cache</string>
     <string name="settings_title">Settings</string>
+    <string name="deposit">Deposit</string>
+    <string name="withdraw">Withdraw</string>
 </resources>

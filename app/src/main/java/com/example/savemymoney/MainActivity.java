@@ -29,20 +29,23 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.savemymoney.databinding.ActivityMainBinding;
 
+import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements SettingsFragment.OnFragmentInteractionListener {
     private static final String TAG = "SaveMyMoney:MainActivity";
 
     private AppBarConfiguration mAppBarConfiguration;
 
-    private ProgressBar myProgressBar;
+    private ProgressBar progressToday;
+    private ProgressBar progressWeek;
+    private ProgressBar progressMonth;
+    private TextView tvTodayLeft;
+    private TextView tvWeekLeft;
+    private TextView tvMonthLeft;
 
     private Wallet wallet;
-
-    private TextView budgetMonthTW;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,21 +68,22 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
         NavigationUI.setupWithNavController(navigationView, navController);
 
         // Find the Button by its ID
-        myProgressBar = findViewById(R.id.moneyLeftPb);
-        Button withdrawBtn = findViewById(R.id.redBtn);
-        Button depositBtn = findViewById(R.id.grnBtn);
+        progressToday = findViewById(R.id.progress_today);
+        progressWeek = findViewById(R.id.progress_week);
+        progressMonth = findViewById(R.id.progress_month);
 
-        budgetMonthTW = findViewById(R.id.budgetMonthTW);
+        Button withdrawBtn = findViewById(R.id.btn_withdraw);
+        Button depositBtn = findViewById(R.id.btn_deposit);
+
+        tvTodayLeft = findViewById(R.id.tv_today_left);
+        tvWeekLeft = findViewById(R.id.tv_week_left);
+        tvMonthLeft = findViewById(R.id.tv_month_left);
 
         // Set a click listener
         withdrawBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "withdrawBtn: onClicklistener");
-                // Generate a random progress value between 0 and 100
-                int randomProgress = new Random().nextInt(101);
-                // Set the progress bar to this value
-                myProgressBar.setProgress(randomProgress);
                 newWithdraw();
             }
         });
@@ -201,10 +205,49 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
     }
 
     @SuppressLint("SetTextI18n")
-    void updateTotalOnScreen() {
+    private void updateBudgetForToday() {
         int total = wallet.getSumOfTransactionsByDate(new Date() /*today*/);
-        int budget = Settings.getInstance().getBudget();
-        budgetMonthTW.setText("total = " + total + ", remain budget = " + (budget + total));
+        int budgetForToday = Settings.getInstance().getBudget() / 30;
+        int remain = budgetForToday + total;
+        tvTodayLeft.setText(Integer.toString(remain));
+        int percent = remain < 0 ? 100 : 100 - (int)(((float)remain / (float) budgetForToday) * 100F);
+        progressToday.setProgress(percent, true);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void updateBudgetForWeek() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -7);
+        Date dateWeekAgo = calendar.getTime();
+        calendar.clear();
+        int total = wallet.getSumOfTransactionsByPeriod(dateWeekAgo, new Date());
+        int budgetForWeek = (int) (Settings.getInstance().getBudget() / 4.3);
+        int remain = budgetForWeek + total;
+        tvWeekLeft.setText(Integer.toString(remain));
+        int percent = remain < 0 ? 100 : 100 - (int)(((float)remain / (float) budgetForWeek) * 100F);
+        progressWeek.setProgress(percent, true);
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void updateBudgetForMonth() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -30);
+        Date dateMonthAgo = calendar.getTime();
+        int total = wallet.getSumOfTransactionsByPeriod(dateMonthAgo, new Date());
+        int budgetForMonth = Settings.getInstance().getBudget();
+        int remain = budgetForMonth + total;
+        tvMonthLeft.setText(Integer.toString(remain));
+        int percent = remain < 0 ? 100 : 100 - (int)(((float)remain / (float) budgetForMonth) * 100F);
+        progressMonth.setProgress(percent, true);
+
+        Log.d(TAG, "budgetForMonth = " + budgetForMonth + ", total = " + total + " remain = " + remain + ", percent = " + percent);
+    }
+
+    void updateTotalOnScreen() {
+        updateBudgetForToday();
+        updateBudgetForWeek();
+        updateBudgetForMonth();
     }
 
     @Override
