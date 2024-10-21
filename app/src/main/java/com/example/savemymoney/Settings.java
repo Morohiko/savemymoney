@@ -35,7 +35,7 @@ public class Settings {
         instance = null;
     }
 
-    void installSettings(File cacheDir) {
+    public void installSettings(File cacheDir) {
         cacheFile = new File(cacheDir, SETTINGS_FILENAME);
         if (!createSettingsFileIfNotExist()) {
             Log.e(TAG, "can`t create settings file: " + cacheFile);

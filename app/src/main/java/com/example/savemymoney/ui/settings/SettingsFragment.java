@@ -8,10 +8,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.savemymoney.R;
 import com.example.savemymoney.Settings;
@@ -25,6 +25,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SettingsFragment extends Fragment {
+    private static final String TAG = "SaveMyMoney:SettingsFragment";
+
     private FragmentSettingsBinding binding;
     private OnFragmentInteractionListener listener;
 
@@ -34,9 +36,6 @@ public class SettingsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SettingsViewModel settingsViewModel =
-                new ViewModelProvider(this).get(SettingsViewModel.class);
-
         binding = FragmentSettingsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -90,7 +89,7 @@ public class SettingsFragment extends Fragment {
         builder.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-//                recreateCache
+                Log.d(TAG, "listener = " + listener);
                 if (listener != null) {
                     listener.onFragmentInteraction("removeCache");
                 }

@@ -5,15 +5,17 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class HomeViewModel extends ViewModel {
-
-    private final MutableLiveData<String> mText;
+    private final MutableLiveData<String> command = new MutableLiveData<>();
 
     public HomeViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    // Method to send a command
+    public void sendCommand(String cmd) {
+        command.setValue(cmd);
+    }
+    // LiveData to observe the command
+    public LiveData<String> getCommand() {
+        return command;
     }
 }

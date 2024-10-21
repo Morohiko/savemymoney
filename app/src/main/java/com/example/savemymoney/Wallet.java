@@ -69,7 +69,7 @@ public class Wallet {
         }
     }
 
-    void withdrawMoney(Date date, int amount, String desc) {
+    public void withdrawMoney(Date date, int amount, String desc) {
         String dateString = dateToString(date);
         String timeString = timeToString(date);
         Log.d(TAG, "withdrawMoney: date = " + dateString + ", time = " + timeString + ", amount = " + amount);
@@ -79,7 +79,7 @@ public class Wallet {
         cacheHelper.writeEntriesToJson(walletContainers);
     }
 
-    void depositMoney(Date date, int amount, String desc) {
+    public void depositMoney(Date date, int amount, String desc) {
         String dateString = dateToString(date);
         String timeString = timeToString(date);
         Log.d(TAG, "depositMoney: date = " + dateString + ", time = " + timeString + ", amount = " + amount);
@@ -94,7 +94,7 @@ public class Wallet {
         removeEntryByTime(dateToString(date), timeToString(date));
     }
 
-    int getSumOfTransactionsByDate(Date date) {
+    public int getSumOfTransactionsByDate(Date date) {
         walletContainers = cacheHelper.readEntriesFromJson();
         String dateString = dateToString(date);
         int total = 0;
@@ -111,7 +111,7 @@ public class Wallet {
         return total;
     }
 
-    int getSumOfTransactionsByPeriod(Date start, Date finish) {
+    public int getSumOfTransactionsByPeriod(Date start, Date finish) {
         walletContainers = cacheHelper.readEntriesFromJson();
         int total = 0;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -137,7 +137,7 @@ public class Wallet {
         return total;
     }
 
-    void recreateCache() {
+    public void recreateCache() {
         cacheHelper.recreateCache();
     }
 
